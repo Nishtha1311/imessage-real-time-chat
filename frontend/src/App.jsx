@@ -8,6 +8,7 @@ import PageLoader from "./components/PageLoader";
 import { useAuthStore } from "./store/useAuthStore";
 import { useEffect } from "react";
 import { Toaster } from "react-hot-toast";
+import { axiosInstance } from "./lib/axios";
 
 function App() {
   const { isSignedIn, isLoaded, getToken } = useAuth();
@@ -20,13 +21,16 @@ function App() {
     const syncAuth = async () => {
       if (!isLoaded) return;
 
-      if (isSignedIn) {
-        const token = await getToken();
+    if (isSignedIn) {
+  const token = await getToken();
 
-        checkAuth(token);
-      } else {
-        clearAuth();
-      }
+  axiosInstance.defaults.headers.common.Authorization = `Bearer ${token}`;
+
+  checkAuth(token);
+} else {
+  delete axiosInstance.defaults.headers.common.Authorization;
+  clearAuth();
+}
     };
 
     syncAuth();
