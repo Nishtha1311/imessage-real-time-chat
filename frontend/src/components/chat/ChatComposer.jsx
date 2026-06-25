@@ -4,6 +4,7 @@ import { useRef } from "react";
 import useKeyboardSound from "../../hooks/useKeyboardSound";
 import { useChatStore } from "../../store/useChatStore";
 import { useSelectedConversation } from "../../hooks/useSelectedConversation";
+import { useAuth } from "@clerk/react";
 
 export function ChatComposer() {
   const composerText = useChatStore((state) => state.composerText);
@@ -15,6 +16,8 @@ export function ChatComposer() {
   const { activeConversationId } = useSelectedConversation();
   const { playRandomKeyStrokeSound } = useKeyboardSound();
   const mediaInputRef = useRef(null);
+
+  const { getToken } = useAuth();
 
   const playSoundIfEnabled = () => {
     if (isSoundEnabled) playRandomKeyStrokeSound();
@@ -38,6 +41,7 @@ export function ChatComposer() {
     const didSendMessage = await sendMediaMessage({
       conversationId: activeConversationId,
       file,
+      getToken
     });
 
     if (didSendMessage) playSoundIfEnabled();
