@@ -2,8 +2,6 @@ import { create } from "zustand";
 import { axiosInstance } from "../lib/axios";
 import { io } from "socket.io-client";
 
-const socket = io(BASE_URL, { query: { userId: user._id } });
-
 const BASE_URL =
   import.meta.env.MODE === "development"
     ? "http://localhost:5000"
@@ -20,8 +18,8 @@ export const useAuthStore = create((set, get) => ({
 
     try {
       const res = await axiosInstance.get("/auth/check");
-      set({ authUser: res.data });
 
+      set({ authUser: res.data });
       get().connectSocket(res.data);
     } catch (error) {
       console.error("Error in checkAuth:", error);
@@ -32,14 +30,16 @@ export const useAuthStore = create((set, get) => ({
   },
 
   clearAuth: () => {
-    set({ authUser: null, isCheckingAuth: false, onlineUsers: [] });
     get().disconnectSocket();
+    set({ authUser: null, isCheckingAuth: false, onlineUsers: [] });
   },
 
   connectSocket: (user) => {
     if (!user || get().socket?.connected) return;
 
-    const socket = io(BASE_URL, { query: { userId: user._id } });
+    const socket = io(BASE_URL, {
+      query: { userId: user._id },
+    });
 
     set({ socket });
 
@@ -50,7 +50,11 @@ export const useAuthStore = create((set, get) => ({
 
   disconnectSocket: () => {
     const socket = get().socket;
-    if (socket?.connected) socket.disconnect();
+
+    if (socket?.connected) {
+      socket.disconnect();
+    }
+
     set({ socket: null });
   },
 }));
