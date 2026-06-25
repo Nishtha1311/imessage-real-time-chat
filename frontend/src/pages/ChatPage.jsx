@@ -6,6 +6,7 @@ import ChatSidebar from "../components/chat/ChatSidebar";
 import { ChatHeader } from "../components/chat/ChatHeader";
 import { MessageList } from "../components/chat/MessageList";
 import { ChatComposer } from "../components/chat/ChatComposer";
+import { useAuth } from "@clerk/react";
 
 function ChatPage() {
   const { frameStyle } = useWallpaper();
@@ -18,6 +19,8 @@ function ChatPage() {
 
   const { activeConversation, activeConversationId, isLargeScreen } = useSelectedConversation();
 
+  const { getToken } = useAuth();
+
   useEffect(() => {
     getUsers();
     getConversations();
@@ -26,7 +29,7 @@ function ChatPage() {
   useEffect(() => {
     if (!activeConversationId) return;
 
-    getMessages(activeConversationId);
+    getMessages(activeConversationId,getToken);
     subscribeToMessages(activeConversationId);
 
     // cleanup

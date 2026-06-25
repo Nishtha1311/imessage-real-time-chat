@@ -61,21 +61,28 @@ export const useChatStore = create(
       },
 
       // Fetch all messages between the logged-in user and selected user
-      getMessages: async (userId) => {
-        if (!userId) return;
+      getMessages: async (userId, getToken) => {
+  if (!userId) return;
 
-        set({ isMessagesLoading: true });
+  set({ isMessagesLoading: true });
 
-        try {
-          const res = await axiosInstance.get(`/messages/${userId}`);
-          set({ messages: res.data });
-        } catch (error) {
-          console.error("Error in getMessages:", error);
-          toast.error(error.response?.data?.message || "Failed to load messages");
-        } finally {
-          set({ isMessagesLoading: false });
-        }
+  try {
+    const token = await getToken();
+
+    const res = await axiosInstance.get(`/messages/${userId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
       },
+    });
+
+    set({ messages: res.data });
+  } catch (error) {
+    console.error("Error in getMessages:", error);
+    toast.error(error.response?.data?.message || "Failed to load messages");
+  } finally {
+    set({ isMessagesLoading: false });
+  }
+},
 
       // Send text message or media message with Clerk token
       sendMessage: async (messageData, getToken) => {
