@@ -24,7 +24,7 @@ export function ChatComposer() {
   };
 
   const handleSend = async () => {
-    const didSendMessage = await sendTextMessage(activeConversationId);
+    const didSendMessage = await sendTextMessage(activeConversationId,getToken);
     if (didSendMessage) playSoundIfEnabled();
   };
 
