@@ -13,11 +13,15 @@ export const useAuthStore = create((set, get) => ({
   onlineUsers: [],
   socket: null,
 
-  checkAuth: async () => {
+  checkAuth: async (token) => {
     set({ isCheckingAuth: true });
 
     try {
-      const res = await axiosInstance.get("/auth/check");
+      const res = await axiosInstance.get("/auth/check", {
+  headers: {
+    Authorization: `Bearer ${token}`,
+  },
+});
 
       set({ authUser: res.data });
       get().connectSocket(res.data);
