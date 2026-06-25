@@ -97,7 +97,7 @@ export const useChatStore = create(
 
           if (messageData.file) {
             // Must match upload.single("file") in backend route
-            formData.append("file", messageData.file);
+            formData.append("media", messageData.file);
           }
 
           const res = await axiosInstance.post(
